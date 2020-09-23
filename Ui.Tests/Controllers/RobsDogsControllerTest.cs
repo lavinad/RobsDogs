@@ -1,6 +1,12 @@
-﻿using System.Web.Mvc;
+﻿using System.Collections.Generic;
+using System.Web.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Ui.Controllers;
+using Ui.Data;
+using Ui.Entities;
+using Ui.Models;
+using Ui.Services;
 
 namespace Ui.Tests.Controllers
 {
@@ -8,18 +14,21 @@ namespace Ui.Tests.Controllers
 	public class RobsDogsControllerTest
 	{
 		[TestMethod]
-		public void Index()
+		public void When_Index_Called_GetAllDogOwners_ShouldBeCalledOnce()
 		{
+
 			// Arrange
-			RobsDogsController controller = new RobsDogsController();
+			Mock<DogOwnerService> dogOwnerService = new Mock<DogOwnerService>();
+			dogOwnerService.Setup(a => a.GetAllDogOwners()).Returns(new List<DogOwner>()) ;
+			RobsDogsController controller = new RobsDogsController(dogOwnerService.Object);
 
 			// Act
 			ViewResult result = controller.Index() as ViewResult;
 
 			// Assert
-			Assert.IsNotNull(result);
-			// Should be testing/verifying call to GetAllDogOwners and subsequent methods down the stack.
-			// Moq is installed to help you.
+			dogOwnerService.Verify(a => a.GetAllDogOwners(), Times.Once);
+
 		}
+
 	}
 }
